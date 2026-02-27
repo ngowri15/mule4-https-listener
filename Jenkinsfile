@@ -38,7 +38,7 @@ pipeline {
             steps {
                 echo "Deploying to Mule runtime..."
                 sh """
-                cp target/${APP_NAME}.jar ${MULE_HOME}/apps/
+                cp target/*-mule-application.jar ${MULE_HOME}/apps/
                 """
             }
         }
