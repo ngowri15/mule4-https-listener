@@ -15,5 +15,6 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 	<flow name="https-listener-pocFlow" doc:id="34e02863-01c4-4e89-b650-905871f3d903" >
 		<http:listener doc:name="Listener" doc:id="9ff8782c-a767-4b0f-ad02-bfc3636a6e89" config-ref="HTTPS_Listener_Config" path="/test"/>
 		<logger level="INFO" doc:name="Logger" doc:id="a74474f6-8d58-4487-a42b-47ffc5f9e056" message="Hello"/>
+		<set-payload value="Success" doc:name="Set Payload" doc:id="e0c466d4-dee8-4fc1-955d-6dd5a76f4a91" />
 	</flow>
 </mule>
