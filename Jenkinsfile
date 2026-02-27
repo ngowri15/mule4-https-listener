@@ -1,29 +1,56 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2709
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+pipeline {
+    agent any
 
-\f0\fs24 \cf0 pipeline \{\
-    agent any\
-\
-    tools \{\
-        jdk 'JDK8'\
-        maven 'Maven3'\
-    \}\
-\
-    stages \{\
-        stage('Checkout') \{\
-            steps \{\
-                checkout scm\
-            \}\
-        \}\
-\
-        stage('Build Mule App') \{\
-            steps \{\
-                sh 'mvn clean package -DskipTests'\
-            \}\
-        \}\
-    \}\
-\}}
+    tools {
+        jdk 'JDK8'
+        maven 'Maven3'
+    }
+
+    environment {
+        APP_NAME = "Mule4_HTTPS_Listener_POC"
+        MULE_HOME = "/Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Mule App') {
+            steps {
+                echo "Building Mule application using Java 8..."
+                sh 'java -version'
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Verify Artifact') {
+            steps {
+                echo "Listing generated artifacts..."
+                sh 'ls -l target/'
+            }
+        }
+
+        stage('Deploy to Mule Runtime') {
+            steps {
+                echo "Deploying to Mule runtime..."
+                sh """
+                cp target/${APP_NAME}.jar ${MULE_HOME}/apps/
+                """
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "Build & Deployment Successful ✅"
+        }
+        failure {
+            echo "Build Failed ❌"
+        }
+    }
+}
