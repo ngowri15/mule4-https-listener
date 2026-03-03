@@ -59,7 +59,7 @@ pipeline {
                 echo "Starting Mule runtime..."
                 sh '''
                 $MULE_HOME/bin/mule start
-                sleep 15
+                sleep 60
                 '''
             }
         }
