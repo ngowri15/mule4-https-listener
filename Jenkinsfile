@@ -7,50 +7,76 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "Mule4_HTTPS_Listener_POC"
+        APP_NAME = "https-listener-poc-1.0.0-SNAPSHOT-mule-application"
         MULE_HOME = "/Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0"
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Build') {
             steps {
-                checkout scm
+                echo "Building Mule project..."
+                sh 'mvn clean package'
             }
         }
 
-        stage('Build Mule App') {
+        stage('Stop Mule') {
             steps {
-                echo "Building Mule application using Java 8..."
-                sh 'java -version'
-                sh 'mvn clean package -DskipTests'
+                echo "Stopping Mule runtime..."
+                sh '''
+                if pgrep -f mule >/dev/null; then
+                    $MULE_HOME/bin/mule stop
+                    sleep 10
+                else
+                    echo "Mule not running"
+                fi
+                '''
             }
         }
 
-        stage('Verify Artifact') {
+        stage('Remove Old App') {
             steps {
-                echo "Listing generated artifacts..."
-                sh 'ls -l target/'
+                echo "Removing old deployed app JAR..."
+                sh '''
+                rm -f $MULE_HOME/apps/${APP_NAME}*.jar
+                '''
             }
         }
 
-        stage('Deploy to Mule Runtime') {
+        stage('Deploy New App') {
             steps {
-                echo "Deploying to Mule runtime..."
-                sh """
-                cp target/*-mule-application.jar ${MULE_HOME}/apps/
-                """
+                echo "Deploying new version..."
+                sh '''
+                APP_JAR=$(ls target/*.jar | head -n 1)
+                echo "Deploying $APP_JAR"
+                cp $APP_JAR $MULE_HOME/apps/
+                '''
             }
         }
 
-    }
-
-    post {
-        success {
-            echo "Build & Deployment Successful ✅"
+        stage('Start Mule') {
+            steps {
+                echo "Starting Mule runtime..."
+                sh '''
+                $MULE_HOME/bin/mule start
+                sleep 15
+                '''
+            }
         }
-        failure {
-            echo "Build Failed ❌"
+
+        stage('Verify Deployment') {
+            steps {
+                echo "Checking if app is running..."
+                sh '''
+                STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/)
+                if [ "$STATUS" = "200" ]; then
+                    echo "Deployment SUCCESSFUL"
+                else
+                    echo "Deployment FAILED"
+                    exit 1
+                fi
+                '''
+            }
         }
     }
 }
