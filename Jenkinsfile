@@ -68,7 +68,7 @@ pipeline {
             steps {
                 echo "Checking if app is running..."
                 sh '''
-                STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/)
+                STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/test)
                 if [ "$STATUS" = "200" ]; then
                     echo "Deployment SUCCESSFUL"
                 else
