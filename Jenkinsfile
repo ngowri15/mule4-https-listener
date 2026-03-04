@@ -7,7 +7,6 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "https-listener-poc-1.0.0-SNAPSHOT-mule-application"
         MULE_HOME = "/Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0"
     }
 
@@ -30,15 +29,6 @@ pipeline {
                 else
                     echo "Mule not running"
                 fi
-                '''
-            }
-        }
-
-        stage('Remove Old App') {
-            steps {
-                echo "Removing old deployed app JAR..."
-                sh '''
-                rm -f $MULE_HOME/apps/${APP_NAME}*.jar
                 '''
             }
         }
