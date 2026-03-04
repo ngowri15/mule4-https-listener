@@ -53,14 +53,16 @@ pipeline {
         }
 
         stage('Start Mule') {
-            steps {
-                echo "Starting Mule runtime..."
-                sh '''
-                $MULE_HOME/bin/mule start
-                sleep 60
-                '''
-            }
-        }
+    steps {
+        echo "Starting Mule runtime..."
+        sh '''
+            export MULE_HOME=/Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0
+            export MULE_BASE=/Users/alphanove/mule-base
+            mkdir -p $MULE_BASE
+            $MULE_HOME/bin/mule run
+        '''
+    }
+}
 
         stage('Verify Deployment') {
             steps {
