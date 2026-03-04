@@ -65,7 +65,7 @@ pipeline {
     steps {
         echo "Starting Mule runtime..."
         sh '''
-        $MULE_HOME/bin/mule start
+        $MULE_HOME/bin/mule run
             '''
         }
     }
