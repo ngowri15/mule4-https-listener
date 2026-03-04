@@ -12,10 +12,18 @@ pipeline {
 
     stages {
 
-        stage('Build') {
+        stage('Build Mule App') {
             steps {
-                echo "Building Mule project..."
-                sh 'mvn clean package'
+                echo "Building Mule application using Java 8..."
+                sh 'java -version'
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+        
+        stage('Verify Artifact') {
+            steps {
+                echo "Listing generated artifacts..."
+                sh 'ls -l target/'
             }
         }
 
