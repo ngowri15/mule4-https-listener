@@ -35,7 +35,7 @@ pipeline {
                     $MULE_HOME/bin/mule stop
                     sleep 10
                 else
-                    echo "Mule not running"
+                    echo "Mule was not running"
                 fi
                 '''
             }
