@@ -51,6 +51,15 @@ pipeline {
                 '''
             }
         }
+        
+        stage('Debug Permissions') {
+    steps {
+        sh '''
+            whoami
+            ls -l /Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0/lib/boot/
+        '''
+    }
+}
 
         stage('Start Mule Runtime') {
     steps {
