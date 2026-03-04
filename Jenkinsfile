@@ -52,7 +52,7 @@ pipeline {
             }
         }
 
-        stage('Start Mule') {
+        stage('Start Mule Runtime') {
     steps {
         echo "Starting Mule runtime..."
         dir('/Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0') {
