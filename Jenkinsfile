@@ -55,10 +55,11 @@ pipeline {
         stage('Start Mule') {
     steps {
         echo "Starting Mule runtime..."
-        sh '''
-            cd /Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0
-            ./bin/mule run
-        '''
+        dir('/Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0') {
+            sh '''
+                ./bin/mule run
+            '''
+        }
     }
 }
 
