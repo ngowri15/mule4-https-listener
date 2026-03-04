@@ -56,9 +56,10 @@ pipeline {
     steps {
         echo "Starting Mule runtime..."
         sh '''
+            # Set Mule installation directory
             export MULE_HOME=/Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0
-            export MULE_BASE=/Users/alphanove/mule-base
-            mkdir -p $MULE_BASE
+
+            # Run Mule in foreground so Jenkins can see logs
             $MULE_HOME/bin/mule run
         '''
     }
