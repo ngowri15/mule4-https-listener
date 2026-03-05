@@ -8,6 +8,7 @@ pipeline {
 
     environment {
         MULE_HOME = "/Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0"
+        MULE_BASE = "/Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0"
     }
 
     stages {
@@ -29,8 +30,10 @@ pipeline {
 
         stage('Stop Mule') {
             steps {
-                echo "Stopping Mule runtime..."
+                echo "Stopping Mule runtime if running..."
                 sh '''
+                export MULE_HOME=$MULE_HOME
+                export MULE_BASE=$MULE_BASE
                 if pgrep -f mule >/dev/null; then
                     $MULE_HOME/bin/mule stop
                     sleep 10
@@ -46,30 +49,33 @@ pipeline {
                 echo "Deploying new version..."
                 sh '''
                 APP_JAR=$(ls target/*.jar | head -n 1)
-                echo "Deploying $APP_JAR"
+                echo "Deploying $APP_JAR to $MULE_HOME/apps/"
                 cp $APP_JAR $MULE_HOME/apps/
                 '''
             }
         }
         
         stage('Debug Permissions') {
-    steps {
-        sh '''
-            whoami
-            ls -l /Users/alphanove/Downloads/Softwares/mule-standalone-4.5.0/lib/boot/
-        '''
-    }
-}
+            steps {
+                sh '''
+                echo "Current user: $(whoami)"
+                ls -l $MULE_HOME/lib/boot/
+                '''
+            }
+        }
 
         stage('Start Mule Runtime') {
-    steps {
-        echo "Starting Mule runtime..."
-        sh '''
-        cd $MULE_HOME
-        bin/mule run
-        '''
-    }
-}
+            steps {
+                echo "Starting Mule runtime in detached mode..."
+                sh '''
+                export MULE_HOME=$MULE_HOME
+                export MULE_BASE=$MULE_BASE
+                cd $MULE_HOME
+                ./bin/mule start
+                sleep 15  # give Mule some time to start
+                '''
+            }
+        }
 
         stage('Verify Deployment') {
             steps {
@@ -79,7 +85,7 @@ pipeline {
                 if [ "$STATUS" = "200" ]; then
                     echo "Deployment SUCCESSFUL"
                 else
-                    echo "Deployment FAILED"
+                    echo "Deployment FAILED (HTTP $STATUS)"
                     exit 1
                 fi
                 '''
