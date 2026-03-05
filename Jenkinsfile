@@ -65,10 +65,11 @@ pipeline {
     steps {
         echo "Starting Mule runtime..."
         sh '''
-        $MULE_HOME/bin/mule run
-            '''
-        }
+        cd $MULE_HOME
+        bin/mule run
+        '''
     }
+}
 
         stage('Verify Deployment') {
             steps {
